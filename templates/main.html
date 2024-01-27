@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+    <!-- Include CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src='{% static "main.js" %}'></script>
+    <!-- Other meta tags, CSS links, etc. -->
+    <link href="//cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel='stylesheet'>
+    <link href="//cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" rel='stylesheet'>
+</head>
+<body>
+ 
+
+<!-- Weather -->
+<div class="container mt-5">
+  <div class="d-flex flex-row justify-content-center align-items-center">
+      <div class="weather__card" style="width:1000px;">
+          <div class="d-flex flex-row justify-content-center align-items-center">
+            <div class="p-3">
+              <h2>{{ celsius_temp }}&deg;C</h2>
+            </div>
+              <div class="p-3">
+                  <img src="https://svgur.com/i/oKG.svg">
+              </div>
+              {% if data %}
+              <div class="p-3">
+                  <h3 style="margin-top:15px;">{{ data.name }},{{ data.sys.country }} </h3>
+                  <span class="weather__description" style="margin-top:25px;font-size:18px;">{{ data.weather.0.description }}</span>
+              </div>
+              {% endif %}
+  
+            </div>
+ 
+          <div class="weather__status d-flex flex-row justify-content-center align-items-center mt-3">
+            <div class="p-4 d-flex justify-content-center align-items-center">
+              <form method="POST" action="{% url 'main' %}" class="d-flex">
+                {% csrf_token %}
+                <input class="form-control me-2" type="text" name="city" placeholder="Enter City" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+              </form>
+            </div>          
+              <div class="p-4 d-flex justify-content-center align-items-center">
+                {% if feels_like_celsius >= 25 %}
+                  <img src="{% static 'img/hot.png' %}" title="hot icons">
+                {% else %}
+                  <img src="{% static 'img/temperature.png' %}">
+                {% endif %}
+              </div>
+              <div class="p-4 d-flex justify-content-center align-items-center">
+                  <img src="https://svgur.com/i/oHw.svg">
+                  <span>{{ data.main.humidity }} %</span>
+              </div>
+              <div class="p-4 d-flex justify-content-center align-items-center">
+                  <img src="https://svgur.com/i/oH_.svg">
+                  <span>{{ data.main.pressure }} hPa</span>
+              </div>
+              {% if data %}
+              <div class="p-4 d-flex justify-content-center align-items-center">
+                  <img src="https://svgur.com/i/oKS.svg">
+                  <span>{{ wind_speed_kmph }} km/h</span>
+              </div>
+              {% endif %}
+
+          </div>
+      </div>
+  </div>
+</div>
+<div class="mt-5 d-flex justify-content-center align-items-center">
+  Made with ♡ By Anuj
+</div>
+</body>
+</html>

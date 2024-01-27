@@ -1,0 +1,74 @@
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Assuming you're using axios for HTTP requests
+
+const WeatherPage = () => {
+  const [weatherData, setWeatherData] = useState({});
+  const [userLocation, setUserLocation] = useState({});
+
+  useEffect(() => {
+    // Function to get user's location and fetch weather data from backend
+    const getLocationAndWeather = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    }
+
+    const showPosition = (position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Send user location data to backend to fetch weather
+      axios.post('/api/getWeatherData', { latitude, longitude })
+        .then(response => {
+          setWeatherData(response.data.weatherData);
+          setUserLocation(response.data.userLocation);
+        })
+        .catch(error => {
+          console.error('Error fetching weather data:', error);
+        });
+    }
+
+    getLocationAndWeather();
+  }, []);
+
+  return (
+    <div className="container mt-5">
+      <div className="d-flex flex-row justify-content-center align-items-center">
+        <div className="weather__card">
+          <div className="d-flex flex-row justify-content-center align-items-center">
+            <div className="p-3">
+              <h2>{weatherData.temperature}&deg;</h2>
+            </div>
+            <div className="p-3">
+              {/* Your image */}
+              <img src="https://svgur.com/i/oKG.svg" alt="Weather Icon" />
+            </div>
+            <div className="p-3">
+              <h5>{userLocation.city}</h5>
+              <h3>{userLocation.country}</h3>
+              <span className="weather__description">{weatherData.description}</span>
+            </div>
+          </div>
+          <div className="weather__status d-flex flex-row justify-content-center align-items-center mt-3">
+            <div className="p-4 d-flex justify-content-center align-items-center">
+              <img src="https://svgur.com/i/oHw.svg" alt="Humidity Icon" />
+              <span>{weatherData.humidity}%</span>
+            </div>
+            <div className="p-4 d-flex justify-content-center align-items-center">
+              <img src="https://svgur.com/i/oH_.svg" alt="Pressure Icon" />
+              <span>{weatherData.pressure} mB</span>
+            </div>
+            <div className="p-4 d-flex justify-content-center align-items-center">
+              <img src="https://svgur.com/i/oKS.svg" alt="Wind Speed Icon" />
+              <span>{weatherData.windSpeed} km/h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+};
+
+export default WeatherPage;
